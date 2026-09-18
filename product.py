@@ -71,5 +71,6 @@ class Product:
         try:
             datetime.strptime(date_string, cls.DATE_FORMAT)
         except (ValueError, TypeError):
+            raise ValueError("Date must be in DD/MM/YYYY format.")
             raise ValueError(f"Date must be in {cls.DATE_FORMAT} format.")
         return date_string
