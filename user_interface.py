@@ -22,7 +22,7 @@ SUCCESS = "bold green"
 WARNING = "bold yellow on red"
 ERROR = "bold red"
 
-sleep_amount = 0.2
+sleep_amount = 0.03
 
 class ShopApplication:
     MENU = {
