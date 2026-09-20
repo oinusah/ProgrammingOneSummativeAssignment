@@ -1,3 +1,6 @@
-product_id,product_name,category,brand,size,supplier,price,quantity,entry_date,expiry_date
-1,23,444,444,344,34,23.00,3,16/09/2026,14/02/2006
-2,Rumi,Food,Buduka,12,Osman,122.00,5,17/09/2026,17/09/2026
+product_id,product_name,category,brand,size,supplier,price,quantity,entry_date,expiry_date
+
+1,23,444,444,344,34,23.00,3,16/09/2026,14/02/2006
+
+2,Rumi,Food,Buduka,12,Osman,122.00,5,17/09/2026,17/09/2026
+

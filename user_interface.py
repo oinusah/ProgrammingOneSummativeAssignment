@@ -22,7 +22,7 @@ SUCCESS = "bold green"
 WARNING = "bold yellow on red"
 ERROR = "bold red"
 
-sleep_amount = 0.5
+sleep_amount = 0.2
 
 class ShopApplication:
     MENU = {
@@ -46,7 +46,7 @@ class ShopApplication:
 
 
     def run(self):
-        if self._ask("Types yes to open, or exit to close", choices=["yes","exit"]) == "exit":
+        if self._ask("Types yes to open, or exit to close", choices= ("yes","exit")) == "exit":
             return
         try:
             self._start_application()
@@ -56,7 +56,7 @@ class ShopApplication:
         self.console.print(Panel("Welcome to My shop inventory & sales Tracker",style= ACCENT, border_style=PRIMARY, expand=False))
         while self._save_changes():
             self._show_menu()
-            choice = self._ask("choose you menu option", choices= list(self.MENU))
+            choice = self._ask("choose you menu option",show_choices=False, choices= list(self.MENU))
             try:
                 if choice == "0":
                     self.console.print("All changes saved. Goodbye!", style=SUCCESS)
@@ -81,12 +81,12 @@ class ShopApplication:
                 elif choice == "8":
                     history = self.sales.get_sales_history()
                     headings = [name.replace("_"," ").title() for name in history.columns]
-                    self._tables("sale History", headings, history.itertuples(index=False, name=None))
+                    self._table("sale History", headings, history.itertuples(index=False, name=None))
             except ValueError as error:
-                self.console.print( str(error),style=ERROR, markup=False)              
+                self.console.print( str(error),style=ERROR, markup=False)         
 
-    def _ask(self, label, **options):  # raw funtion that Propmts the user to return trimmed input.. to be use explitly in this codes...Basicx
-        return Prompt.ask(f"[{PRIMARY}] {escape(label)} [/{PRIMARY}]", console= self.console,show_choices=False,show_default=False,**options).strip()
+    def _ask(self, label,show_choices = True, **options):  # raw funtion that Propmts the user to return trimmed input.. to be use explitly in this codes...Basicx
+        return Prompt.ask(f"[{PRIMARY}] {escape(label)} [/{PRIMARY}]", console= self.console, show_choices=show_choices, show_default=False,**options).strip()
 
     def _table(self,title, headings, rows, show_header=True):
         table = Table( title=title, title_style=ACCENT,box=box.ROUNDED,
@@ -134,13 +134,15 @@ class ShopApplication:
         self.console.print(Panel(
             f"[cyan]PRODUCT:[/] {len(self.inventory)}  "
             f"[yellow]Low stock:[/] {len(self.inventory.get_low_stock_products())}",
-            title="shop Details", title_align="Left",border_style=PRIMARY, expand=False
+            title="shop Details", title_align="Left",border_style=PRIMARY, expand=False,
+            style=ACCENT
 ,        ))
-        rows = [(Text(key, style=PRIMARY), label) for key,label in self.MENU.items()]
+        rows = [(Text(key, style=PRIMARY), Text(label, style=ACCENT))
+            for key, label in self.MENU.items()]
         self._table("Main Menu", ["Option", "Action"], rows, show_header=False)
 
     def _add_product(self):
-        self.console.print(Panel("Add product", border_style=PRIMARY))
+        self.console.print(Panel("Add product", border_style=PRIMARY, style=ACCENT))
         values = {"product_id": self._ask("Product ID")}
         for field, label in self.FIELDS.items():
             values[field] = self._ask(label)
@@ -159,7 +161,7 @@ class ShopApplication:
         else:
             choices = dict(enumerate(self.FIELDS, start=1))
             self._table("Field to update", ["Option", "Field"], enumerate(self.FIELDS.values(), start=1))
-            choice = self._ask("Field to update", choices=[str(number) for number in choices])
+            choice = self._ask("Field to update", show_choices=False, choices=[str(number) for number in choices])
             field = choices[int(choice)]
             value = self._ask(f"New {self.FIELDS[field]}")
             self.inventory.update_product(product_id, {field: value})
@@ -186,7 +188,7 @@ class ShopApplication:
                 
     def _record_sale(self):
         self.sales.cancel_sale()
-        self.console.print(Panel("Enter items; type Done to checkout", border_style=PRIMARY))
+        self.console.print(Panel("Enter items; type Done to checkout", border_style=PRIMARY, style=ACCENT))
         while True:
             product_id = self._ask("Product ID")
             if product_id.lower().strip() == "done":
@@ -198,7 +200,7 @@ class ShopApplication:
         if not self.sales.current_sale:
             self.console.print("No items were added", style=WARNING)
             return
-        rows = [(item["product_name"], item["quantity"], f"{item['unit_price']:.2f}",
+        rows = [ (item["product_name"], item["quantity"], f"{item['unit_price']:.2f}",
                f"{item['subtotal']:.2f}") for item in self.sales.current_sale]
         self._table("Current Sale", ["Product", "Quantity", "Unit Price", "Subtotal"], rows)
         total = self.sales.calculate_total()

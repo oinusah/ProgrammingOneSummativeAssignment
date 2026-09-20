@@ -16,8 +16,11 @@ class FileHandling:
 
     def __init__(self,data_directory ="data"):
         #Relative paths always start  beside this program, not in the launch folder
-        program_directory = os.path.dirname(os.path.abspath(__file__))
-        self.data_directory = os.path.abspath(os.path.join(program_directory,data_directory))
+        program_file = os.path.abspath(__file__)        
+        program_directory = os.path.dirname(program_file) 
+        add_data_file_to_program_dir = os.path.join( program_directory,data_directory)
+        
+        self.data_directory = os.path.abspath(add_data_file_to_program_dir)
         self.products_file = os.path.join(self.data_directory, "products.csv")
         self.sales_file =os.path.join(self.data_directory, "sales.csv")
         self.income_file = os.path.join(self.data_directory, "income.csv")
