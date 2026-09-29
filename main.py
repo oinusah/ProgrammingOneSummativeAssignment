@@ -9,7 +9,7 @@ def main():
     try:
         app.run()
     except (KeyboardInterrupt, EOFError):
-        app.console.log(message, style=warning,)
+        app.console.log(message, style=warning)
         if app.pending_save:
             app.console.log( message2, style="Bold yellow on red" )         
 
